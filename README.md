@@ -15,7 +15,6 @@ Built as Project 1 of a 10-project series learning LLM development from raw API 
 This project is deliberately built the "hard way" — no SDK abstractions, no JSON-mode/schema enforcement, no framework. The goal is to understand what's actually happening under the hood before relying on tooling that hides it:
 
 - Calling an LLM API with raw HTTP and understanding the request/response shape
-- Controlling output determinism via `temperature`
 - Getting structured data out of a model using prompting alone, plus defensive parsing for when it doesn't comply
 - Understanding why the API key must live server-side, never in browser JS
 
@@ -59,9 +58,9 @@ Open `http://localhost:5000` in your browser.
 
 ```
 resume-gap-checker/
-├── app.py                 # Flask backend + Gemini API calls
+├── app.py                 
 ├── templates/
-│   └── index.html         # Single-page UI
+│   └── index.html         
 ├── requirements.txt
 └── README.md
 ```
@@ -69,7 +68,7 @@ resume-gap-checker/
 ## How it works
 
 - `build_prompt()` constructs a prompt instructing the model to return only JSON in a fixed shape (`match_score`, `missing_keywords`, `matched_keywords`, `one_line_verdict`)
-- `call_gemini()` sends that prompt to the Gemini API via raw `requests`, with `temperature` set low (~0.1) to keep scoring consistent across repeated runs on the same input
+- `call_gemini_api()` sends that prompt to the Gemini Model via gemini's Interaction API
 - `parse_model_json()` defensively strips markdown fences and parses the response, since prompting-based JSON isn't guaranteed the way schema/tool-calling APIs are
 - The Flask route `/analyze` receives form data from the browser, calls Gemini, and returns JSON to the frontend, which renders it
 
@@ -77,12 +76,8 @@ resume-gap-checker/
 
 - No persistence — results aren't saved between sessions
 - JSON parsing can fail if the model adds commentary despite instructions; failures are surfaced in the UI rather than crashing
-- No auth, no rate limiting — not meant for public deployment as-is
-
-## What's next
-
-This is Project 1 in a series. Project 2 moves to few-shot prompting and output consistency testing; Project 3 replaces manual JSON parsing with actual structured-output/function-calling. See [series repo/index if applicable].
+- No auth, no rate limiting and not meant for public deployment
 
 ## License
 
-MIT (or your choice)
+MIT
