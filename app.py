@@ -3,9 +3,6 @@ from google import genai
 import os
 import re
 import json
-import requests
-from dotenv import load_dotenv
-load_dotenv()
 
 app = Flask(__name__)
 
