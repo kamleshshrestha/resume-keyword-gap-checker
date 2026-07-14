@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Resume Gap Checker</title>
+    <style>
+      body {
+        font-family: -apple-system, sans-serif;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+      textarea {
+        width: 100%;
+        height: 180px;
+        margin-bottom: 16px;
+        padding: 8px;
+        font-size: 14px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 15px;
+        cursor: pointer;
+      }
+      #result {
+        margin-top: 24px;
+        padding: 16px;
+        background: #f5f5f5;
+        border-radius: 8px;
+        display: none;
+      }
+      .score {
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .missing {
+        color: #b00020;
+      }
+      .matched {
+        color: #1a7a1a;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Resume Gap Checker</h1>
+
+    <label>Job Description</label>
+    <textarea id="jd" placeholder="Paste the job description here"></textarea>
+
+    <label>Your Resume</label>
+    <textarea id="resume" placeholder="Paste your resume text here"></textarea>
+
+    <button onclick="analyze()">Check Match</button>
+
+    <div id="result"></div>
+
+    <script>
+      async function analyze() {
+        const job_description = document.getElementById("jd").value;
+        const resume = document.getElementById("resume").value;
+        const resultDiv = document.getElementById("result");
+
+        resultDiv.style.display = "block";
+        resultDiv.innerHTML = "Analyzing...";
+
+        const res = await fetch("/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `job_description=${encodeURIComponent(job_description)}&resume=${encodeURIComponent(resume)}`,
+        });
+
+        const data = await res.json();
+        console.log("Response from server:", data);
+
+        if (data.error) {
+          resultDiv.innerHTML = `<p style="color:red">${data.error}</p>`;
+          return;
+        }
+        const matched = Array.isArray(data.matched_keywords)
+          ? data.matched_keywords
+          : [];
+        const missing = Array.isArray(data.missing_keywords)
+          ? data.missing_keywords
+          : [];
+        resultDiv.innerHTML = `
+    <div class="score">Match Score: ${data.match_score ?? "N/A"}/100</div>
+    <p><strong>Verdict:</strong> ${data.one_line_verdict}</p>
+    <p class="matched"><strong>Matched:</strong> ${matched.length > 0 ? matched.join(", ") : "none"}</p>
+    <p class="missing"><strong>Missing:</strong> ${missing.length > 0 ? missing.join(", ") : "none"}</p>
+  `;
+      }
+    </script>
+  </body>
+</html>

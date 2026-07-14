@@ -156,6 +156,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.zshrc
 
 # Spyder project settings
 .spyderproject
@@ -218,3 +219,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Virtual Environments Folder
+rkgc-venv/
