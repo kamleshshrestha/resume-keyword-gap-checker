@@ -58,9 +58,9 @@ Open `http://localhost:5000` in your browser.
 
 ```
 resume-gap-checker/
-├── app.py                 
+├── app.py
 ├── templates/
-│   └── index.html         
+│   └── index.html
 ├── requirements.txt
 └── README.md
 ```
